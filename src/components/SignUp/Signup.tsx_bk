@@ -1,0 +1,72 @@
+import React, { useState } from 'react';
+import {useMutation} from "@apollo/client";
+import { CREATEUSER_MUTATE } from './query';
+
+export interface createUserResponse {
+    id: number;
+    username: string;
+    password: string;
+    name: string;
+    email: string;
+}
+
+export interface createUserVars {
+    username: string;
+    password: string;
+    name: string;
+    email: string;
+}
+
+export const SignupContainer = () => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
+
+    const [saveUser, { error, data }] = useMutation(CREATEUSER_MUTATE, {
+        variables: { username, password, email, name }
+    });
+
+    return(
+        <div>
+            <h3>User Login</h3>
+            {error ? <p>Oh no! {error.message}</p> : null}
+            {data &&  data.createUser? <p>Saved! id {data.createUser.id} created</p> : null}
+            <form>
+                <p>
+                    <label>Username</label>
+                    <input
+                        name="username"
+                        onChange={e => setUsername(e.target.value)}
+                    />
+                </p>
+                <p>
+                    <label>Password</label>
+                    <input
+                        name="password"
+                        onChange={e => setPassword(e.target.value)}
+                    />
+                </p>
+                <p>
+                    <label>Name</label>
+                    <input
+                        name="name"
+                        onChange={e => setName(e.target.value)}
+                    />
+                </p>
+                <p>
+                    <label>Email</label>
+                    <input
+                        name="email"
+                        onChange={e => setEmail(e.target.value)}
+                    />
+                </p>
+                <button onClick={() => username && password && name && email && saveUser()}>
+                    Login
+                </button>
+            </form>
+        </div>
+    );
+
+}
+
